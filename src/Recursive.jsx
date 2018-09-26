@@ -60,7 +60,7 @@ class Recursive extends Component {
 	}
 
 	renderNext = newProps => {
-		const { willRecurse, nextIteration } = this;
+		const { nextIteration, willRecurse } = this;
 		const { children } = this.props;
 
 		return !willRecurse ? null : (
@@ -92,10 +92,11 @@ class Recursive extends Component {
 	};
 
 	render = () => {
-		const { nextIteration, willRecurse, isChildrenArray } = this;
 		const { children, iteration, maxIterations, tree, keyName } = this.props;
 
 		if (iteration >= maxIterations) return null;
+
+		const { nextIteration, willRecurse, isChildrenArray } = this;
 
 		if (typeof children !== "function" && !isChildrenArray)
 			return (
@@ -140,26 +141,27 @@ class Recursive extends Component {
 			);
 		}
 
-		const { renderNext } = this;
+		if (tree) {
+			if (!keyName)
+				throw new Error('Missing "keyName" prop in Recursive component.');
 
-		if (!tree)
+			const { hasNodes, renderNodes } = this;
+
 			return children({
 				props: iterationProps,
-				value: iteration,
-				willRecurse,
-				renderNext
+				depth: iteration,
+				hasNodes,
+				renderNodes
 			});
+		}
 
-		if (!keyName)
-			throw new Error('Missing "keyName" prop in Recursive component.');
-
-		const { hasNodes, renderNodes } = this;
+		const { renderNext } = this;
 
 		return children({
 			props: iterationProps,
-			depth: iteration,
-			hasNodes,
-			renderNodes
+			value: iteration,
+			willRecurse,
+			renderNext
 		});
 	};
 }
