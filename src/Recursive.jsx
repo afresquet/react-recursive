@@ -1,56 +1,76 @@
-import React, { Fragment } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 
-const Recursive = props => {
-	const { iteration, maxIterations, tree, nodesName, keyName, ...rest } = props;
+class Recursive extends Component {
+	static propTypes = {
+		children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
+		iteration: PropTypes.number,
+		maxIterations: PropTypes.number,
+		tree: PropTypes.bool,
+		nodesName: PropTypes.string,
+		keyName: PropTypes.string
+	};
 
-	if (iteration >= maxIterations) return null;
+	static defaultProps = {
+		iteration: 0,
+		maxIterations: 10,
+		tree: false,
+		nodesName: "nodes",
+		keyName: ""
+	};
 
-	const nextIteration = iteration + 1;
+	get iterationProps() {
+		const {
+			children,
+			iteration,
+			maxIterations,
+			tree,
+			nodesName,
+			keyName,
+			...iterationProps
+		} = this.props;
 
-	const willRecurse = nextIteration !== maxIterations;
-
-	if (typeof props.children === "object")
-		return (
-			<Fragment>
-				{props.children}
-
-				{willRecurse && (
-					<Recursive {...props} iteration={nextIteration}>
-						{props.children}
-					</Recursive>
-				)}
-			</Fragment>
-		);
-
-	if (!tree) {
-		const renderNext = newProps =>
-			!willRecurse ? null : (
-				<Recursive {...props} {...newProps} iteration={nextIteration}>
-					{props.children}
-				</Recursive>
-			);
-
-		return props.children({
-			props: rest,
-			value: iteration,
-			willRecurse,
-			renderNext
-		});
+		return iterationProps;
 	}
 
-	if (!keyName)
-		throw new Error('Missing "keyName" prop in Recursive component.');
+	get nextIteration() {
+		return this.props.iteration + 1;
+	}
 
-	const nodes = rest[nodesName];
-	const hasNodes = nodes && Array.isArray(nodes) && nodes.length > 0;
+	get willRecurse() {
+		return this.nextIteration < this.props.maxIterations;
+	}
 
-	const renderNodes = newProps =>
-		!hasNodes
+	get nodes() {
+		return this.iterationProps[this.props.nodesName];
+	}
+
+	get hasNodes() {
+		const { nodes } = this;
+
+		return nodes && Array.isArray(nodes) && nodes.length > 0;
+	}
+
+	renderNext = newProps => {
+		const { willRecurse, nextIteration } = this;
+		const { children } = this.props;
+
+		return !willRecurse ? null : (
+			<Recursive {...this.props} {...newProps} iteration={nextIteration}>
+				{children}
+			</Recursive>
+		);
+	};
+
+	renderNodes = newProps => {
+		const { nextIteration, nodes, hasNodes } = this;
+		const { children, nodesName, tree, keyName } = this.props;
+
+		return !hasNodes
 			? null
 			: nodes.map(node => (
 					<Recursive
-						tree
+						tree={tree}
 						nodesName={nodesName}
 						keyName={keyName}
 						{...node}
@@ -58,33 +78,52 @@ const Recursive = props => {
 						iteration={nextIteration}
 						key={node[keyName]}
 					>
-						{props.children}
+						{children}
 					</Recursive>
 			  ));
+	};
 
-	return props.children({
-		props: rest,
-		depth: iteration,
-		hasNodes,
-		renderNodes
-	});
-};
+	render = () => {
+		const { nextIteration, willRecurse } = this;
+		const { children, iteration, maxIterations, tree, keyName } = this.props;
 
-Recursive.propTypes = {
-	children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
-	iteration: PropTypes.number,
-	maxIterations: PropTypes.number,
-	tree: PropTypes.bool,
-	nodesName: PropTypes.string,
-	keyName: PropTypes.string
-};
+		if (iteration >= maxIterations) return null;
 
-Recursive.defaultProps = {
-	iteration: 0,
-	maxIterations: 10,
-	tree: false,
-	nodesName: "nodes",
-	keyName: ""
-};
+		if (typeof children !== "function")
+			return (
+				<Fragment>
+					{children}
+
+					{willRecurse && (
+						<Recursive {...this.props} iteration={nextIteration}>
+							{children}
+						</Recursive>
+					)}
+				</Fragment>
+			);
+
+		const { iterationProps, renderNext } = this;
+
+		if (!tree)
+			return children({
+				props: iterationProps,
+				value: iteration,
+				willRecurse,
+				renderNext
+			});
+
+		if (!keyName)
+			throw new Error('Missing "keyName" prop in Recursive component.');
+
+		const { hasNodes, renderNodes } = this;
+
+		return children({
+			props: iterationProps,
+			depth: iteration,
+			hasNodes,
+			renderNodes
+		});
+	};
+}
 
 export default Recursive;
