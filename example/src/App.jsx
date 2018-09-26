@@ -1,13 +1,51 @@
-import React, { Fragment } from "react";
+import React from "react";
 
 import Recursive from "react-recursive";
 
+const tree = [
+	{
+		name: "One",
+		nodes: [
+			{
+				name: "One One",
+				nodes: [
+					{ name: "One One One" },
+					{ name: "One One Two" },
+					{ name: "One One Three" },
+				],
+			},
+			{ name: "One Two" },
+		],
+	},
+	{
+		name: "Two",
+		nodes: [
+			{ name: "Two One" },
+			{
+				name: "Two Two",
+				nodes: [
+					{ name: "Two Two One" },
+					{ name: "Two Two Two", nodes: [{ name: "Two Two Two One" }] },
+				],
+			},
+		],
+	},
+	{ name: "Three" },
+	{ name: "Four", nodes: [{ name: "Four One" }] },
+];
+
+const styles = {
+	container: { display: "flex" },
+	code: { whiteSpace: "pre", tabSize: 2 },
+};
+
 const App = () => (
-	<Fragment>
-		<h1>React Recursive</h1>
+	<div style={styles.container}>
+		<div>
+			<h1>React Recursive</h1>
 
-		<pre style={{ whiteSpace: "pre", tabSize: 2 }}>
-			{`
+			<pre style={styles.code}>
+				{`
 		<ul>
 			<Recursive maxIterations={5}>
 				<li>
@@ -16,54 +54,120 @@ const App = () => (
 			</Recursive>
 		</ul>
 			`}
-		</pre>
-		<ul>
-			<Recursive maxIterations={5}>
-				<li>
-					<p>Five Items</p>
-				</li>
-			</Recursive>
-		</ul>
+			</pre>
+			<ul>
+				<Recursive maxIterations={5}>
+					<li>
+						<p>Five Items</p>
+					</li>
+				</Recursive>
+			</ul>
 
-		<pre style={{ whiteSpace: "pre", tabSize: 2 }}>
-			{`
+			<pre style={styles.code}>
+				{`
 		<ul>
 			<Recursive maxIterations={3}>
 				{iteration => (
-					<Fragment>
-						<li>
-							<p>Item {iteration.value + 1}</p>
-							<p>
-								Will item {iteration.value + 2} render?
-								{iteration.willRecurse ? " Yes" : " No"}
-							</p>
-						</li>
+					<li>
+						<p>Item {iteration.value + 1}</p>
+						<p>
+							Will item {iteration.value + 2} render?
+							{iteration.willRecurse ? " Yes" : " No"}
+						</p>
 
 						{iteration.willRecurse && <ul>{iteration.renderNext()}</ul>}
-					</Fragment>
+					</li>
 				)}
 			</Recursive>
 		</ul>
 			`}
-		</pre>
-		<ul>
-			<Recursive maxIterations={3}>
-				{iteration => (
-					<Fragment>
+			</pre>
+			<ul>
+				<Recursive maxIterations={3}>
+					{iteration => (
 						<li>
 							<p>Item {iteration.value + 1}</p>
 							<p>
 								Will item {iteration.value + 2} render?
 								{iteration.willRecurse ? " Yes" : " No"}
 							</p>
-						</li>
 
-						{iteration.willRecurse && <ul>{iteration.renderNext()}</ul>}
-					</Fragment>
-				)}
-			</Recursive>
+							{iteration.willRecurse && <ul>{iteration.renderNext()}</ul>}
+						</li>
+					)}
+				</Recursive>
+			</ul>
+		</div>
+
+		<div>
+			<pre style={styles.code}>
+				{`
+		const tree = [
+			{
+				name: "One",
+				nodes: [
+					{
+						name: "One One",
+						nodes: [
+							{ name: "One One One" },
+							{ name: "One One Two" },
+							{ name: "One One Three" },
+						],
+					},
+					{ name: "One Two" },
+				],
+			},
+			{
+				name: "Two",
+				nodes: [
+					{ name: "Two One" },
+					{
+						name: "Two Two",
+						nodes: [
+							{ name: "Two Two One" },
+							{ name: "Two Two Two", nodes: [{ name: "Two Two Two One" }] },
+						],
+					},
+				],
+			},
+			{ name: "Three" },
+			{ name: "Four", nodes: [{ name: "Four One" }] },
+		];
+
+		<ul>
+			{tree.map(node => (
+				<Recursive {...node} tree keyName="name" key={node.name}>
+					{iteration => (
+						<li>
+							<p>
+								{iteration.props.name} | depth: {iteration.depth}
+							</p>
+
+							{iteration.hasNodes && <ul>{iteration.renderNodes()}</ul>}
+						</li>
+					)}
+				</Recursive>
+			))}
 		</ul>
-	</Fragment>
+			`}
+			</pre>
+			<ul>
+				{tree.map(node => (
+					<Recursive {...node} tree keyName="name" key={node.name}>
+						{iteration => (
+							<li>
+								<p>
+									{iteration.props.name} | depth: {iteration.depth}
+								</p>
+
+								{iteration.hasNodes && <ul>{iteration.renderNodes()}</ul>}
+							</li>
+						)}
+					</Recursive>
+				))}
+			</ul>
+		</div>
+	</div>
 );
 
 export default App;
