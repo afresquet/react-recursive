@@ -15,6 +15,8 @@ module.exports = wallaby => {
 			"!src/**/*.test.js?(x)"
 		],
 
+		filesWithNoCoverageCalculated: ["src/index.js", "src/setupTests.js"],
+
 		tests: ["src/**/*.test.js?(x)"],
 
 		env: {

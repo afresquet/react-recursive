@@ -1,6 +1,6 @@
 {
 	"name": "react-recursive",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "A React component to make recursive components easily.",
 	"author": "Alvaro Fresquet <alvarofresquet@gmail.com> (https://twitter.com/afresquet)",
 	"license": "MIT",
@@ -25,7 +25,7 @@
 		"prepare": "npm run build",
 		"predeploy": "cd example && npm install && npm run build",
 		"deploy": "gh-pages -d example/build",
-		"coverage": "istanbul cover node_modules/.bin/react-scripts -- test --coverage --env=jsdom --collectCoverageFrom=src/**/*.js --collectCoverageFrom=!src/index.js",
+		"coverage": "istanbul cover node_modules/.bin/react-scripts -- test --coverage --env=jsdom --collectCoverageFrom=src/**/*.js --collectCoverageFrom=!src/index.js --collectCoverageFrom=!src/setupTests.js",
 		"coverage:after": "cat coverage/lcov.info | node_modules/coveralls/bin/coveralls.js"
 	},
 	"peerDependencies": {
