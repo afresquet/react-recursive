@@ -55,6 +55,69 @@ describe("Recursive component", () => {
 		});
 	});
 
+	describe("Array as child", () => {
+		const mockArray = [1, 2, 3];
+
+		test("Renders correctly", () => {
+			expect.assertions(1);
+
+			const wrapper = shallow(<Recursive>{mockArray}</Recursive>);
+
+			expect(wrapper).toHaveLength(1);
+		});
+
+		test("Recursively renders the amount of times that the array contains", () => {
+			expect.assertions(1);
+
+			const wrapper = mount(<Recursive>{mockArray}</Recursive>);
+			const iterations = wrapper.find(Recursive);
+
+			expect(iterations).toHaveLength(mockArray.length);
+		});
+
+		describe("Function as array item", () => {
+			const mockProps = { foo: "bar" };
+			const mockArrayWithFn = [1, 2, jest.fn(() => 3)];
+			const fnItem = mockArrayWithFn[2]; // eslint-disable-line prefer-destructuring
+			let iterationObj;
+
+			beforeAll(() => {
+				mount(<Recursive {...mockProps}>{mockArrayWithFn}</Recursive>);
+				iterationObj = fnItem.mock.calls[0][0]; // eslint-disable-line prefer-destructuring
+			});
+
+			test("Calls the function if the array item is a function", () => {
+				expect.assertions(1);
+
+				expect(fnItem).toHaveBeenCalledTimes(1);
+			});
+
+			test("Function gets passed an iteration object", () => {
+				expect.assertions(1);
+
+				expect(iterationObj).toBeInstanceOf(Object);
+			});
+
+			test("Iteration object has the passed props", () => {
+				expect.assertions(1);
+
+				expect(iterationObj.props.foo).toEqual(mockProps.foo);
+			});
+
+			test("Iteration object has the current iteration number", () => {
+				expect.assertions(1);
+
+				expect(iterationObj.value).toEqual(2);
+			});
+
+			test("Iteration object has a 'willRecurse' boolean", () => {
+				expect.assertions(1);
+
+				expect(iterationObj.willRecurse).toEqual(false);
+			});
+		});
+	});
+
 	describe("Function as child", () => {
 		test("Renders correctly", () => {
 			expect.assertions(1);

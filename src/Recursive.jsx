@@ -3,7 +3,11 @@ import PropTypes from "prop-types";
 
 class Recursive extends Component {
 	static propTypes = {
-		children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
+		children: PropTypes.oneOfType([
+			PropTypes.func,
+			PropTypes.node,
+			PropTypes.array
+		]).isRequired,
 		iteration: PropTypes.number,
 		maxIterations: PropTypes.number,
 		tree: PropTypes.bool,
@@ -39,6 +43,10 @@ class Recursive extends Component {
 
 	get willRecurse() {
 		return this.nextIteration < this.props.maxIterations;
+	}
+
+	get isChildrenArray() {
+		return Array.isArray(this.props.children);
 	}
 
 	get nodes() {
@@ -84,12 +92,12 @@ class Recursive extends Component {
 	};
 
 	render = () => {
-		const { nextIteration, willRecurse } = this;
+		const { nextIteration, willRecurse, isChildrenArray } = this;
 		const { children, iteration, maxIterations, tree, keyName } = this.props;
 
 		if (iteration >= maxIterations) return null;
 
-		if (typeof children !== "function")
+		if (typeof children !== "function" && !isChildrenArray)
 			return (
 				<Fragment>
 					{children}
@@ -102,7 +110,37 @@ class Recursive extends Component {
 				</Fragment>
 			);
 
-		const { iterationProps, renderNext } = this;
+		const { iterationProps } = this;
+
+		if (isChildrenArray) {
+			const currentItem = children[iteration];
+			const child =
+				typeof currentItem !== "function"
+					? currentItem
+					: currentItem({
+							props: iterationProps,
+							value: iteration,
+							willRecurse
+					  });
+
+			return (
+				<Fragment>
+					{child}
+
+					{willRecurse && (
+						<Recursive
+							{...this.props}
+							iteration={nextIteration}
+							maxIterations={children.length}
+						>
+							{children}
+						</Recursive>
+					)}
+				</Fragment>
+			);
+		}
+
+		const { renderNext } = this;
 
 		if (!tree)
 			return children({

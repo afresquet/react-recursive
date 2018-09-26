@@ -1,6 +1,6 @@
 {
 	"name": "react-recursive",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"description": "A React component to make recursive components easily.",
 	"author": "Alvaro Fresquet <alvarofresquet@gmail.com> (https://twitter.com/afresquet)",
 	"license": "MIT",
