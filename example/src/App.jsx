@@ -65,25 +65,27 @@ const App = () => (
 
 			<pre style={styles.code}>
 				{`
-		<Recursive foo="bar">
-			{[
+		<Recursive
+			foo="bar"
+			array={[
 				"Item 1",
 				<h2 key="array-2">Item 2</h2>,
-				({ props, value, willRecurse }) =>
-					[
-						\`Item \${value + 1}\`,
-						" | ",
-						\`foo="\${props.foo}"\`,
-						" | ",
-						<i key="array-3-italic">{\`Will continue? \${
-							willRecurse ? "Yes" : "No"
-						}\`}</i>,
+				({ props, value, willRecurse }) => [
+					\`Item \${value + 1}\`,
+					" | ",
+					\`foo="\${props.foo}"\`,
+					" | ",
+					<i key="array-3-italic">{\`Will continue? \${
+						willRecurse ? "Yes" : "No"
+					}\`}</i>,
+				],
 			]}
-		</Recursive>
+		/>
 				`}
 			</pre>
-			<Recursive foo="bar">
-				{[
+			<Recursive
+				foo="bar"
+				array={[
 					"Item 1",
 					<h2 key="array-2">Item 2</h2>,
 					({ props, value, willRecurse }) => [
@@ -96,7 +98,7 @@ const App = () => (
 						}`}</i>,
 					],
 				]}
-			</Recursive>
+			/>
 
 			<pre style={styles.code}>
 				{`

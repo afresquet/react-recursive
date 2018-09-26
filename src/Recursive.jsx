@@ -7,17 +7,20 @@ class Recursive extends Component {
 			PropTypes.func,
 			PropTypes.node,
 			PropTypes.array
-		]).isRequired,
+		]),
 		iteration: PropTypes.number,
 		maxIterations: PropTypes.number,
+		array: PropTypes.arrayOf(PropTypes.any),
 		tree: PropTypes.bool,
 		nodesName: PropTypes.string,
 		keyName: PropTypes.string
 	};
 
 	static defaultProps = {
+		children: undefined,
 		iteration: 0,
 		maxIterations: 10,
+		array: undefined,
 		tree: false,
 		nodesName: "nodes",
 		keyName: ""
@@ -72,12 +75,13 @@ class Recursive extends Component {
 
 	renderNodes = newProps => {
 		const { nextIteration, nodes, hasNodes } = this;
-		const { children, nodesName, tree, keyName } = this.props;
+		const { children, array, nodesName, tree, keyName } = this.props;
 
 		return !hasNodes
 			? null
 			: nodes.map(node => (
 					<Recursive
+						array={array}
 						tree={tree}
 						nodesName={nodesName}
 						keyName={keyName}
@@ -92,13 +96,25 @@ class Recursive extends Component {
 	};
 
 	render = () => {
-		const { children, iteration, maxIterations, tree, keyName } = this.props;
+		const {
+			children,
+			iteration,
+			maxIterations,
+			array,
+			tree,
+			keyName
+		} = this.props;
+
+		if (!children && !array)
+			throw new Error(
+				'Recursive component requires an "array" prop when no children are provided.'
+			);
 
 		if (iteration >= maxIterations) return null;
 
 		const { nextIteration, willRecurse, isChildrenArray } = this;
 
-		if (typeof children !== "function" && !isChildrenArray)
+		if (children && typeof children !== "function" && !isChildrenArray)
 			return (
 				<Fragment>
 					{children}
@@ -113,8 +129,9 @@ class Recursive extends Component {
 
 		const { iterationProps } = this;
 
-		if (isChildrenArray) {
-			const currentItem = children[iteration];
+		if (isChildrenArray || (!children && array)) {
+			const arr = children || array;
+			const currentItem = arr[iteration];
 			const child =
 				typeof currentItem !== "function"
 					? currentItem
@@ -132,7 +149,7 @@ class Recursive extends Component {
 						<Recursive
 							{...this.props}
 							iteration={nextIteration}
-							maxIterations={children.length}
+							maxIterations={arr.length}
 						>
 							{children}
 						</Recursive>
@@ -140,6 +157,8 @@ class Recursive extends Component {
 				</Fragment>
 			);
 		}
+
+		const arrayIteration = array ? array[iteration] : undefined;
 
 		if (tree) {
 			if (!keyName)
@@ -149,6 +168,7 @@ class Recursive extends Component {
 
 			return children({
 				props: iterationProps,
+				array: arrayIteration,
 				depth: iteration,
 				hasNodes,
 				renderNodes
@@ -159,6 +179,7 @@ class Recursive extends Component {
 
 		return children({
 			props: iterationProps,
+			array: arrayIteration,
 			value: iteration,
 			willRecurse,
 			renderNext

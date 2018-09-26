@@ -118,6 +118,37 @@ describe("Recursive component", () => {
 		});
 	});
 
+	describe("No children with array as prop", () => {
+		const mockArray = [() => "1", 2, <h1>3</h1>];
+		const wrapper = shallow(<Recursive array={mockArray} />);
+
+		test("Renders correctly", () => {
+			expect.assertions(1);
+
+			expect(wrapper).toHaveLength(1);
+		});
+
+		test("First iteration passes the first item and then continues with array as child", () => {
+			expect.assertions(1);
+
+			const firstChild = wrapper.children().first();
+
+			expect(firstChild.text()).toEqual(mockArray[0]());
+		});
+
+		test("Throws an error if no children nor array are provided", () => {
+			expect.assertions(1);
+
+			try {
+				shallow(<Recursive />);
+			} catch (error) {
+				expect(error.message).toEqual(
+					'Recursive component requires an "array" prop when no children are provided.'
+				);
+			}
+		});
+	});
+
 	describe("Function as child", () => {
 		test("Renders correctly", () => {
 			expect.assertions(1);
@@ -204,6 +235,17 @@ describe("Recursive component", () => {
 				expect.assertions(1);
 
 				expect(iteration.willRecurse).toEqual(true);
+			});
+
+			test("If an array prop is provided, its iteration is passed in the iteration object", () => {
+				expect.assertions(1);
+
+				const mockArray = [1, 2, 3];
+				const mockFnArray = jest.fn(({ renderNext }) => renderNext());
+				shallow(<Recursive array={mockArray}>{mockFnArray}</Recursive>);
+				const iterationArray = mockFnArray.mock.calls[0][0];
+
+				expect(iterationArray.array).toEqual(mockArray[0]);
 			});
 
 			describe("renderNext", () => {
@@ -303,6 +345,29 @@ describe("Recursive component", () => {
 				expect.assertions(1);
 
 				expect(iteration.props.name).toEqual(mockTree.name);
+			});
+
+			test("If an array prop is provided, its iteration is passed in the iteration object", () => {
+				expect.assertions(1);
+
+				const mockArray = [1, 2, 3];
+				const mockFnArray = jest.fn(
+					({ props: { name }, hasNodes, renderNodes }) => (
+						<Fragment>
+							<p>{name}</p>
+
+							{hasNodes && renderNodes()}
+						</Fragment>
+					)
+				);
+				mount(
+					<Recursive {...mockTree} tree keyName="name" array={mockArray}>
+						{mockFnArray}
+					</Recursive>
+				);
+				const iterationArray = mockFnArray.mock.calls[0][0];
+
+				expect(iterationArray.array).toEqual(mockArray[0]);
 			});
 
 			test("Iteration object has the current depth number", () => {
