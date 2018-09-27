@@ -380,9 +380,9 @@ Not calling this function is the equivalent of terminating the recursion early. 
 This property is only defined when recursing over a [tree](#tree).
 
 ```jsx
-const tree = { name: "Foo", nodes: [1, 2, 3] }
+const tree = { name: "Foo", nodes: [{ name: "Bar"}, { name: "Baz"}] }
 
-<Recursive maxIterations={3} {...tree} foo="bar">
+<Recursive maxIterations={3} {...tree} tree keyName="name" foo="bar">
 	{iteration => (
 		<Fragment>
 			<p>Depth {iteration.depth + 1}</p>
