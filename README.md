@@ -12,31 +12,32 @@ Collaboration and PRs are welcome!
 
 ## Table of contents
 
-1. [Getting Started](#Getting-Started)
-   1. [Installation](#Installation)
-   2. [Usage](#Usage)
-2. [Documentation](#Documentation)
-   1. [Props](#Props)
+1. [Getting Started](#getting-started)
+   1. [Installation](#installation)
+   2. [Usage](#usage)
+2. [Documentation](#documentation)
+   1. [Props](#props)
       1. [iteration](#iteration)
-      2. [maxIterations](#maxIterations)
+      2. [maxIterations](#maxiterations)
       3. [array](#array)
       4. [tree](#tree)
-      5. [nodesName](#nodesName)
-      6. [keyName](#keyName)
+      5. [nodesName](#nodesname)
+      6. [keyName](#keyname)
       7. [children](#children)
       8. [rest props](#rest-props)
-   2. [Iteration Object](#Iteration-Object)
-      1. [iteration.props](#iteration.props)
-      2. [iteration.array](#iteration.array)
-      3. [iteration.index](#iteration.index)
-      4. [iteration.willRecurse](#iteration.willRecurse)
-      5. [iteration.renderNext()](<#iteration.renderNext()>)
-      6. [iteration.depth](#iteration.depth)
-      7. [iteration.hasNodes](#iteration.hasNodes)
-      8. [iteration.renderNodes()](<#iteration.renderNodes()>)
-3. [Examples](#Examples)
-4. [Credits](#Credits)
-5. [License](#License)
+   2. [Iteration Object](#iteration-object)
+      1. [iteration.props](#iterationprops)
+      2. [iteration.array](#iterationarray)
+      3. [iteration.index](#iterationindex)
+      4. [iteration.willRecurse](#iterationwillrecurse)
+      5. [iteration.renderNext()](#iterationrendernext)
+      6. [iteration.depth](#iterationdepth)
+      7. [iteration.hasNodes](#iterationhasnodes)
+      8. [iteration.renderNodes()](#iterationrendernodes)
+3. [Hard Recursion Cap](#hard-recursion-cap)
+4. [Examples](#examples)
+5. [Credits](#credits)
+6. [License](#license)
 
 ## Getting Started
 
@@ -73,7 +74,7 @@ export default App;
 
 All props are optional and, with the exeption of [`iteration`](#iteration), can be changed during the recursion.
 
-Some props are dependent on others, for example if you set [`tree`](#tree) to `true`, you must provide a [`keyName`](#keyName) prop.
+Some props are dependent on others, for example if you set [`tree`](#tree) to `true`, you must provide a [`keyName`](#keyname) prop.
 
 For simplicity's sake, some example snippets will show self-closing components but note that this is only possible when providing an [`array`](#array) prop.
 
@@ -115,7 +116,7 @@ If the component receives a function as a child the current item of the array wi
 
 If no children are provided this prop becomes required instead of optional. Items of this array can be anything that can be rendered by React, and if a function that returns a valid component is passed it takes an [`iteration` object](#iteration-object) as its parameter.
 
-Note that the prop [`maxIterations`](#maxIterations) has no effect if no children are provided, or if the child is an array. It uses the length of the array as the maximum amount of iterations.
+Note that the prop [`maxIterations`](#maxiterations) has no effect if no children are provided, or if the child is an array. It uses the length of the array as the maximum amount of iterations.
 
 Also note that if a function child is provided, if the array contains a function it will not be called and you must do so manually.
 
@@ -139,7 +140,7 @@ Determines if the recursion is happening over a tree. Defaults to false.
 
 When set to true, it recurses over a tree and its subsequent nodes.
 
-Since the nodes need to be mapped on, React requires a unique key to be set to each node. This makes `tree` dependent on the `keyName` prop. See [`keyName`](#keyName) for more information.
+Since the nodes need to be mapped on, React requires a unique key to be set to each node. This makes `tree` dependent on the `keyName` prop. See [`keyName`](#keyname) for more information.
 
 The tree to recurse over needs to be spread like any other prop in the `Recursive` component.
 
@@ -199,7 +200,7 @@ const tree = { uniqueId: "123", nodes: [{}, {}, {}] }
 
 The `Recursive` component takes anything that is considered a valid component by React.
 
-It will render its children one after another the amount of times provided in the [`maxIterations`](#maxIterations) prop.
+It will render its children one after another the amount of times provided in the [`maxIterations`](#maxiterations) prop.
 
 If the child is an array it will render each item one after another. If an item is a function, an [`iteration` object](#iteration-object) will be passed as its argument.
 
@@ -227,7 +228,7 @@ If no children are provided, an [`array`](#array) prop is necessary and it will 
 
 #### rest props
 
-Any other props passed to the `Recursive` component are passed to the [`iteration` object](#iteration-object) on its [`props`](#iteration.props) property.
+Any other props passed to the `Recursive` component are passed to the [`iteration` object](#iteration-object) on its [`props`](#iterationprops) property.
 
 This props can be changed during the recursion and new ones can be added on the fly.
 
@@ -247,7 +248,7 @@ It contains the following properties and methods:
 
 #### iteration.props
 
-An object with any other extra props passed to the `Recursive` and new ones received from the [`renderNext`](#iteration.renderNext) and [`renderNodes`](#iteration.renderNodes) methods.
+An object with any other extra props passed to the `Recursive` and new ones received from the [`renderNext`](#iterationrenderNext) and [`renderNodes`](#iterationrenderNodes) methods.
 
 This props can be changed during the recursion and new ones can be added on the fly.
 
@@ -283,7 +284,7 @@ This property is only defined when not recursing over a [tree](#tree).
 
 Indicates if the next iteration will reach the maximum iterations provided.
 
-If it is `false` it means that if the [`maxIterations`](#maxIterations) prop stays the same the next iteration will return `null`.
+If it is `false` it means that if the [`maxIterations`](#maxiterations) prop stays the same the next iteration will return `null`.
 
 This property is only defined when not recursing over a [tree](#tree).
 
@@ -297,9 +298,9 @@ This property is only defined when not recursing over a [tree](#tree).
 
 This is the function that keeps the recursion going. When called it returns the next iteration at the position that is called.
 
-It can receive an object as its argument that will pass new props or modify existing ones for the next iteration. The only unmodifiable prop is the [current iteration index](#iteration.index).
+It can receive an object as its argument that will pass new props or modify existing ones for the next iteration. The only unmodifiable prop is the [current iteration index](#iterationindex).
 
-Not calling this function is the equivalent of terminating the recursion early. Otherwise [`maxIterations`](#maxIterations) will handle that.
+Not calling this function is the equivalent of terminating the recursion early. Otherwise [`maxIterations`](#maxiterations) will handle that.
 
 This property is only defined when not recursing over a [tree](#tree).
 
@@ -317,7 +318,7 @@ This property is only defined when not recursing over a [tree](#tree).
 
 #### iteration.depth
 
-Similar to [`iteration.index`](#iteration.index), but instead of being the current iteration index number it's the current depth of the tree.
+Similar to [`iteration.index`](#iterationindex), but instead of being the current iteration index number it's the current depth of the tree.
 
 This means that the parent node of the tree will be of `depth` 0, its nodes will be 1, and so on.
 
@@ -344,9 +345,9 @@ const tree = {
 
 #### iteration.hasNodes
 
-Similar to [`iteration.willRecurse`](#iteration.willRecurse), but instead indicates if the current node has child nodes to recurse over.
+Similar to [`iteration.willRecurse`](#iterationwillrecurse), but instead indicates if the current node has child nodes to recurse over.
 
-If it's `false` it means that [`iteration.renderNodes`](#iteration.renderNodes) will return `null`.
+If it's `false` it means that [`iteration.renderNodes`](#iterationrendernodes) will return `null`.
 
 This property is only defined when recursing over a [tree](#tree).
 
@@ -371,11 +372,11 @@ const tree = {
 
 #### iteration.renderNodes()
 
-Similar to [`iteration.renderNext`](#iteration.renderNext), but instead it loops through all of the current iteration nodes and renders them.
+Similar to [`iteration.renderNext`](#iterationrendernext), but instead it loops through all of the current iteration nodes and renders them.
 
-It can receive an object as its argument that will pass new props or modify existing ones for the next iteration. The only unmodifiable prop is the [current iteration depth](#iteration.depth).
+It can receive an object as its argument that will pass new props or modify existing ones for the next iteration. The only unmodifiable prop is the [current iteration depth](#iterationdepth).
 
-Not calling this function is the equivalent of terminating the recursion early. Otherwise either if there are [no nodes to recurse over](#iteration.hasNodes) or [`maxIterations`](#maxIterations) will handle that.
+Not calling this function is the equivalent of terminating the recursion early. Otherwise either if there are [no nodes to recurse over](#iterationhasnodes) or [`maxIterations`](#maxiterations) will handle that.
 
 This property is only defined when recursing over a [tree](#tree).
 
@@ -391,6 +392,24 @@ const tree = { name: "Foo", nodes: [{ name: "Bar"}, { name: "Baz"}] }
 		</Fragment>
 	)}
 </Recursive>
+```
+
+## Hard Recursion Cap
+
+For safety, there's a hard cap on the amount of iterations that han happen in a recursion. This cap is set to 10000 by default.
+
+This is to prevent infinite recursions and have the browser die if you make a mistake (guess how many times I had to force quit mine).
+
+You can make it any value you want by editing a static property of the `Recursive` component before using it. This static property is called `MAX_RECURSIONS_HARD_CAP`.
+
+```js
+Recursive.MAX_RECURSIONS_HARD_CAP = 99999; // Any value you want.
+```
+
+If you want to completely remove this cap you can set it to 0. Do this change at your own risk and be aware that it can kill the browser.
+
+```js
+Recursive.MAX_RECURSIONS_HARD_CAP = 0; // Cap turned off.
 ```
 
 ## Examples
