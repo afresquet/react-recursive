@@ -386,7 +386,7 @@ const tree = { name: "Foo", nodes: [{ name: "Bar"}, { name: "Baz"}] }
 <Recursive maxIterations={3} {...tree} tree keyName="name" foo="bar">
 	{iteration => (
 		<Fragment>
-			<p>Depth {iteration.depth + 1}</p>
+			<p>Name {iteration.props.name}</p>
 
 			{iteration.hasNodes && iteration.renderNodes({ foo: "baz" })}
 		</Fragment>
