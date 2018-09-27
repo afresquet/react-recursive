@@ -104,10 +104,10 @@ describe("Recursive component", () => {
 				expect(iterationObj.props.foo).toEqual(mockProps.foo);
 			});
 
-			test("Iteration object has the current iteration number", () => {
+			test("Iteration object has the current iteration index", () => {
 				expect.assertions(1);
 
-				expect(iterationObj.value).toEqual(2);
+				expect(iterationObj.index).toEqual(2);
 			});
 
 			test("Iteration object has a 'willRecurse' boolean", () => {
@@ -143,7 +143,7 @@ describe("Recursive component", () => {
 				shallow(<Recursive />);
 			} catch (error) {
 				expect(error.message).toEqual(
-					'Recursive component requires an "array" prop when no children are provided.'
+					"Recursive component requires an `array` prop when no children are provided."
 				);
 			}
 		});
@@ -225,10 +225,10 @@ describe("Recursive component", () => {
 				expect(iteration.props.foo).toEqual(mockProps.foo);
 			});
 
-			test("Iteration object has the iteration number", () => {
+			test("Iteration object has the iteration index", () => {
 				expect.assertions(1);
 
-				expect(iteration.value).toEqual(0);
+				expect(iteration.index).toEqual(0);
 			});
 
 			test("Iteration object has a 'willRecurse' boolean", () => {
@@ -327,7 +327,7 @@ describe("Recursive component", () => {
 				shallow(<Recursive tree>{() => "Foo"}</Recursive>);
 			} catch (error) {
 				expect(error.message).toEqual(
-					'Missing "keyName" prop in Recursive component.'
+					"Missing `keyName` prop in Recursive component."
 				);
 			}
 		});
@@ -414,6 +414,38 @@ describe("Recursive component", () => {
 					expect(nextNullComponent).toBeNull();
 				});
 			});
+		});
+	});
+
+	describe("Static MAX_RECURSIONS_HARD_CAP property", () => {
+		test("Has a MAX_RECURSIONS_HARD_CAP property that is set to 10000", () => {
+			expect.assertions(1);
+
+			expect(Recursive.MAX_RECURSIONS_HARD_CAP).toEqual(10000);
+		});
+
+		test("Throws error if that hard cap is passed", () => {
+			expect.assertions(1);
+
+			const defaultCap = Recursive.MAX_RECURSIONS_HARD_CAP;
+			const mockCap = 10;
+			const mockMaxIterations = 1000;
+
+			try {
+				Recursive.MAX_RECURSIONS_HARD_CAP = mockCap;
+
+				mount(
+					<Recursive maxIterations={mockMaxIterations}>
+						<p>Foo</p>
+					</Recursive>
+				);
+			} catch (error) {
+				expect(error.message).toEqual(
+					`Recursive component exeeded ${mockCap} iterations. Prop \`maxIterations\` was set to ${mockMaxIterations}. If you wish to change this limit set \`Recursive.MAX_RECURSIONS_HARD_CAP\` to your desired number or to 0 to eliminate the cap. Change this at your own risk.`
+				);
+			} finally {
+				Recursive.MAX_RECURSIONS_HARD_CAP = defaultCap;
+			}
 		});
 	});
 });

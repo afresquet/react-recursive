@@ -70,8 +70,8 @@ const App = () => (
 			array={[
 				"Item 1",
 				<h2 key="array-2">Item 2</h2>,
-				({ props, value, willRecurse }) => [
-					\`Item \${value + 1}\`,
+				({ props, index, willRecurse }) => [
+					\`Item \${index + 1}\`,
 					" | ",
 					\`foo="\${props.foo}"\`,
 					" | ",
@@ -88,8 +88,8 @@ const App = () => (
 				array={[
 					"Item 1",
 					<h2 key="array-2">Item 2</h2>,
-					({ props, value, willRecurse }) => [
-						`Item ${value + 1}`,
+					({ props, index, willRecurse }) => [
+						`Item ${index + 1}`,
 						" | ",
 						`foo="${props.foo}"`,
 						" | ",
@@ -106,9 +106,9 @@ const App = () => (
 			<Recursive maxIterations={3}>
 				{iteration => (
 					<li>
-						<p>Item {iteration.value + 1}</p>
+						<p>Item {iteration.index + 1}</p>
 						<p>
-							Will item {iteration.value + 2} render?
+							Will item {iteration.index + 2} render?
 							{iteration.willRecurse ? " Yes" : " No"}
 						</p>
 
@@ -123,9 +123,9 @@ const App = () => (
 				<Recursive maxIterations={3}>
 					{iteration => (
 						<li>
-							<p>Item {iteration.value + 1}</p>
+							<p>Item {iteration.index + 1}</p>
 							<p>
-								Will item {iteration.value + 2} render?
+								Will item {iteration.index + 2} render?
 								{iteration.willRecurse ? " Yes" : " No"}
 							</p>
 

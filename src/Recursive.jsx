@@ -26,6 +26,8 @@ class Recursive extends Component {
 		keyName: ""
 	};
 
+	static MAX_RECURSIONS_HARD_CAP = 10000;
+
 	get iterationProps() {
 		const {
 			children,
@@ -105,12 +107,22 @@ class Recursive extends Component {
 			keyName
 		} = this.props;
 
-		if (!children && !array)
+		if (
+			Recursive.MAX_RECURSIONS_HARD_CAP &&
+			iteration >= Recursive.MAX_RECURSIONS_HARD_CAP
+		)
 			throw new Error(
-				'Recursive component requires an "array" prop when no children are provided.'
+				`Recursive component exeeded ${
+					Recursive.MAX_RECURSIONS_HARD_CAP
+				} iterations. Prop \`maxIterations\` was set to ${maxIterations}. If you wish to change this limit set \`Recursive.MAX_RECURSIONS_HARD_CAP\` to your desired number or to 0 to eliminate the cap. Change this at your own risk.`
 			);
 
 		if (iteration >= maxIterations) return null;
+
+		if (!children && !array)
+			throw new Error(
+				"Recursive component requires an `array` prop when no children are provided."
+			);
 
 		const { nextIteration, willRecurse, isChildrenArray } = this;
 
@@ -137,7 +149,7 @@ class Recursive extends Component {
 					? currentItem
 					: currentItem({
 							props: iterationProps,
-							value: iteration,
+							index: iteration,
 							willRecurse
 					  });
 
@@ -162,7 +174,7 @@ class Recursive extends Component {
 
 		if (tree) {
 			if (!keyName)
-				throw new Error('Missing "keyName" prop in Recursive component.');
+				throw new Error("Missing `keyName` prop in Recursive component.");
 
 			const { hasNodes, renderNodes } = this;
 
@@ -180,7 +192,7 @@ class Recursive extends Component {
 		return children({
 			props: iterationProps,
 			array: arrayIteration,
-			value: iteration,
+			index: iteration,
 			willRecurse,
 			renderNext
 		});

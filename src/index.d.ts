@@ -11,8 +11,8 @@ export type RecursiveIterationFunction = (
 		props: {};
 		/** Current iteration of the (optional) provided array. */
 		array: any;
-		/** Current iteration number. Only defined when the recursion is not a tree. */
-		value: number;
+		/** Current iteration index number. Only defined when the recursion is not a tree. */
+		index: number;
 		/** True when next iteration won't reach the maxium number of iterations, false when it will. Only defined when the recursion is not a tree. */
 		willRecurse: boolean;
 		/** Function that renders the next iteration. Only defined when the recursion is not a tree. */
@@ -42,6 +42,9 @@ export interface RecursiveProps {
 	keyName?: string;
 }
 
-declare class Recursive extends Component<RecursiveProps> {}
+declare class Recursive extends Component<RecursiveProps> {
+	/** Hard cap on the maximum number of recursions that defaults to 10000. Setting it to 0 eliminates the cap. Change at your own risk. */
+	static MAX_RECURSIONS_HARD_CAP: number;
+}
 
 export default Recursive;
