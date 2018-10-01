@@ -77,13 +77,14 @@ class Recursive extends Component {
 
 	renderNodes = newProps => {
 		const { nextIteration, nodes, hasNodes } = this;
-		const { children, array, nodesName, tree, keyName } = this.props;
+		const { children, nodesName, tree, keyName } = this.props;
+		const { [nodesName]: _, ...parentProps } = this.iterationProps;
 
 		return !hasNodes
 			? null
 			: nodes.map(node => (
 					<Recursive
-						array={array}
+						{...parentProps}
 						tree={tree}
 						nodesName={nodesName}
 						keyName={keyName}
